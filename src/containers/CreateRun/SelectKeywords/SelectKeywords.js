@@ -10,6 +10,7 @@ import Select from '@material-ui/core/Select';
 import Chip from '@material-ui/core/Chip';
 import Button from '@material-ui/core/Button';
 import { Redirect } from 'react-router-dom';
+import axios from 'axios';
 
 const styles = theme => ({
   root: {
@@ -50,28 +51,55 @@ const MenuProps = {
   },
 };
 
-const names = [
-  'rape',
-];
-
 function getStyles(name, that) {
   return {
     fontWeight:
-      that.state.name.indexOf(name) === -1
+      that.state.selected.indexOf(name) === -1
         ? that.props.theme.typography.fontWeightRegular
         : that.props.theme.typography.fontWeightMedium,
   };
 }
 
 class SelectKeywords extends React.Component {
-  state = {
-    name: [],
-    isButtonDisabled: true,
-    redirect: false,
-  };
+  constructor(props) {
+    super(props);
 
+    this.state = {
+      keywords: [],
+      selected: [],
+      isButtonDisabled: true,
+      redirect: false,
+    };
+
+    this.handleChange = this.handleChange.bind(this);
+    this.handleChangeMultiple = this.handleChangeMultiple.bind(this);
+    this.handleButtonClick = this.handleButtonClick.bind(this);
+    this.updateSelection = this.updateSelection.bind(this);
+    this.renderRedirect = this.renderRedirect.bind(this);
+  }
+
+  // Get our data once the component mounts
+  componentDidMount() {
+    axios.get('/get_keywords')
+      .then(res => this.setState({keywords: res.data}) )
+      .then(data => this.updateSelection())
+      .catch(err => console.log("Error getting keyword lists (" + err + ")"));
+  }
+
+  updateSelection() {
+    const keywords = this.state.keywords;
+    var menuBody = [];
+    for (var k in keywords) {
+      const item = keywords[k];
+      const name = item['name'] + '-' + item['version'];
+      menuBody.push(<MenuItem key={name} value={name} style={getStyles(name, this)}>{name}</MenuItem>);
+    }
+
+    this.setState({ menuBody: menuBody });
+  }
+  
   handleChange = event => {
-    this.setState({ name: event.target.value });
+    this.setState({ selected: event.target.value });
     this.setState({ isButtonDisabled: false });
   };
 
@@ -84,15 +112,26 @@ class SelectKeywords extends React.Component {
       }
     }
     this.setState({
-      name: value,
+      selected: value,
     });
 
     this.setState({ isButtonDisabled: false });
   };
 
   handleButtonClick = () => {
-  	this.setState({ redirect: true });
+    axios.post('/choose_keywords', {
+      data: this.state.selected
+    })
+    .then(function (res) {
+      console.log("Successfully posted keywords");
+    })
+    .catch(function (err) {
+      console.log(err);
+    });
+
+    this.setState({ redirect: true });
   }
+
 
   renderRedirect = () => {
 		if (this.state.redirect) {
@@ -116,7 +155,7 @@ class SelectKeywords extends React.Component {
           <InputLabel htmlFor="select-multiple-chip">Selected</InputLabel>
           <Select
             multiple
-            value={this.state.name}
+            value={this.state.selected}
             onChange={this.handleChange}
             input={<Input id="select-multiple-chip" />}
             renderValue={selected => (
@@ -128,11 +167,7 @@ class SelectKeywords extends React.Component {
             )}
             MenuProps={MenuProps}
           >
-            {names.map(name => (
-              <MenuItem key={name} value={name} style={getStyles(name, this)}>
-                {name}
-              </MenuItem>
-            ))}
+            {this.state.menuBody}
           </Select>
         </FormControl>
         <br />
