@@ -22,6 +22,7 @@ var data = {};
 // Current data for current run
 var currRun = {
 	name: '',
+	date: '',
 	collections: [],
 	metadata: "./data/metadata.csv",
 	keywordList: [],
@@ -94,6 +95,14 @@ function saveToSessionFile() {
 }
 
 /** PYTHON PROCESS AND HELPER FUNCTIONS FOR RUNNING SUBCORPORA TOOL **/
+
+// Sets the name of the run
+app.post("/set_run_name", function (req, res) {
+	var currData = req.body.data;
+	currRun.name = currData.name;
+	currRun.date = currData.date;
+	console.log("Current run name set to " + currRun.name + ", current date set to " + currRun.date);
+});
 
 // Sets the collections used for this particular run
 app.post("/choose_collections", function (req, res) {

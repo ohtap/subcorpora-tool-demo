@@ -105,8 +105,8 @@ class SelectKeywords extends React.Component {
             value={this.state.name}
             onChange={this.handleChange}
             inputProps={{
-              name: 'age',
-              id: 'age-simple',
+              name: 'metadata',
+              id: 'metadata',
             }}
           >
             {names.map(name => (

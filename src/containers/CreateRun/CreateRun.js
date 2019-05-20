@@ -5,6 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import { Redirect } from 'react-router-dom';
+import axios from 'axios';
 
 const styles = theme => ({
   container: {
@@ -24,8 +25,16 @@ const styles = theme => ({
 class CreateRun extends React.Component {
 	constructor(props) {
 		super(props);
+
+		var today = new Date();
+		var dd = String(today.getDate()).padStart(2, '0');
+		var mm = String(today.getMonth() + 1).padStart(2, '0');
+		var yyyy = today.getFullYear();
+		var currDate = mm + '/' + dd + '/' + yyyy;
+
 		this.state = {
 			name: '',
+			date: currDate,
 			isButtonDisabled: true,
 			redirect: false,
 		};
@@ -42,7 +51,18 @@ class CreateRun extends React.Component {
 		// TODO: Add check for no name entered and disable the button.
 	};
 
+	// Updates the data in the backend and redirects the page to the next step
 	handleButtonChange(event) {
+		axios.post('/set_run_name', {
+			data: {name: this.state.name, date: this.state.date}
+		})
+		.then(function (res) {
+			console.log("Successfully posted name of the run");
+		})
+		.catch(function (err) {
+			console.log(err);
+		});
+
 		this.setState({ redirect: true });
 	}
 
@@ -78,7 +98,7 @@ class CreateRun extends React.Component {
 			          disabled
 			          id="standard-disabled"
 			          label="Date"
-			          defaultValue="5/31/2019"
+			          defaultValue={this.state.date}
 			          className={classes.textField}
 			          margin="normal"
 			        />

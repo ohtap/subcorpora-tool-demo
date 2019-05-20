@@ -1,12 +1,8 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Winnow",
+  "name": "OHTAP Winnow",
   "icons": [
-    {
-      "src": "favicon.ico",
-      "sizes": "192x192",
-      "type": "image/png"
-    }
+
   ],
   "start_url": "./index.html",
   "display": "standalone",
