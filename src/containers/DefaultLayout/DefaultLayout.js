@@ -26,6 +26,9 @@ import { Route, BrowserRouter, Link } from 'react-router-dom';
 
 const drawerWidth = 240;
 
+const KeywordLists = loadable(() => import('../KeywordLists'));
+const Collections = loadable(() => import('../Collections'));
+
 const styles = theme => ({
   root: {
     display: 'flex',
@@ -168,7 +171,8 @@ class DefaultLayout extends React.Component {
           className={classNames(classes.content)}
         >
           <div className={classes.drawerHeader} />
-
+            <Route exact path='/keyword_lists' component={KeywordLists} />
+            <Route exact path='/collections' component={Collections} />
         </main>
         </BrowserRouter>
       </div>
