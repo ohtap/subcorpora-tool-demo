@@ -67,6 +67,8 @@ class SelectCollections extends React.Component {
     this.state = {
       keywords: [],
       selected: [],
+      selectedIds: [],
+      idsOrder: [],
       isButtonDisabled: true,
       redirect: false,
     };
@@ -81,25 +83,30 @@ class SelectCollections extends React.Component {
   // Get our data once the component mounts
   componentDidMount() {
     axios.get('/get_collections')
-      .then(res => this.setState({keywords: res.data}) )
+      .then(res => this.setState({collections: res.data}) )
       .then(data => this.updateSelection())
       .catch(err => console.log("Error getting collections (" + err + ")"));
   }
 
   // Updates the front-end selection with our current selectable collections
   updateSelection() {
-    const keywords = this.state.keywords;
+    const collections = this.state.collections;
     var menuBody = [];
-    for (var k in keywords) {
-      const item = keywords[k];
+    var idsOrder = [];
+    for (var k in collections) {
+      const item = collections[k];
       const name = item['shortened-name'];
       const _id = item['id'];
+      idsOrder.push(_id);
       menuBody.push(<MenuItem key={_id} value={_id} style={getStyles(name, this)}>{name}</MenuItem>);
     }
 
-    this.setState({ menuBody: menuBody });
+    this.setState({ menuBody: menuBody, idsOrder: idsOrder });
   }
   
+
+  /* Functions to handle change of the selector */
+
   handleChange = event => {
     this.setState({ selected: event.target.value });
     this.setState({ isButtonDisabled: false });
@@ -108,13 +115,17 @@ class SelectCollections extends React.Component {
   handleChangeMultiple = event => {
     const { options } = event.target;
     const value = [];
+    const valueIds = [];
     for (let i = 0, l = options.length; i < l; i += 1) {
       if (options[i].selected) {
         value.push(options[i].value);
+        valueIds.push(this.state.idsOrder[i]);
       }
     }
+
     this.setState({
       selected: value,
+      selectedIds: valueIds,
     });
 
     this.setState({ isButtonDisabled: false });
@@ -136,6 +147,7 @@ class SelectCollections extends React.Component {
   }
 
 
+  // Redirects the page to the next page
   renderRedirect = () => {
     if (this.state.redirect) {
       return <Redirect to='/create_run/select_keywords' />

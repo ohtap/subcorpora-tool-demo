@@ -35,6 +35,8 @@ const SelectCollections = loadable(() => import('../CreateRun/SelectCollections'
 const SelectKeywords = loadable(() => import('../CreateRun/SelectKeywords'));
 const SelectMetadata = loadable(() => import('../CreateRun/SelectMetadata'));
 
+const Report = loadable(() => import('../Report'));
+
 const styles = theme => ({
   root: {
     display: 'flex',
@@ -184,6 +186,7 @@ class DefaultLayout extends React.Component {
             <Route exact path='/create_run/select_collections' component={SelectCollections} />
             <Route exact path='/create_run/select_keywords' component={SelectKeywords} />
             <Route exact path='/create_run/select_metadata' component={SelectMetadata} />
+            <Route exact path='/report' component={Report} />
         </main>
         </BrowserRouter>
       </div>

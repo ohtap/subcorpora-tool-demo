@@ -26,8 +26,7 @@ var currRun = {
 	collections: [],
 	metadata: "./data/metadata.csv",
 	keywordList: [],
-	done: 0,
-	total: 0
+	total: 0 // Progress of the run
 };
 
 /*
@@ -102,6 +101,8 @@ app.post("/set_run_name", function (req, res) {
 	currRun.name = currData.name;
 	currRun.date = currData.date;
 	console.log("Current run name set to " + currRun.name + ", current date set to " + currRun.date);
+
+	res.sendStatus(200);
 });
 
 // Sets the collections used for this particular run
@@ -109,6 +110,8 @@ app.post("/choose_collections", function (req, res) {
 	var currData = req.body;
 	currRun.collections = currData.data;
 	console.log("Current run collections updated to " + currRun.collections);
+
+	res.sendStatus(200);
 });
 
 // Sets the keyword lists used for this particular run
@@ -116,7 +119,15 @@ app.post("/choose_keywords", function (req, res) {
 	var currData = req.body;
 	currRun.keywordList = currData.data;
 	console.log("Current run keyword lists updated to " + currRun.keywordList);
+
+	res.sendStatus(200);
 });
+
+app.get("/get_python_progress", function (req, res) {
+	const statusMessage = "This is a status message from the backend...";
+	currRun.total = 10;
+	res.status(200).send({total: currRun.total, message: statusMessage});
+})
 
 /** GETTING, UPLOADING, AND UPDATING COLLECTIONS **/
 
