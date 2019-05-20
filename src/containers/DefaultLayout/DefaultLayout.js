@@ -26,8 +26,14 @@ import { Route, BrowserRouter, Link } from 'react-router-dom';
 
 const drawerWidth = 240;
 
+const Home = loadable(() => import('../Home'));
 const KeywordLists = loadable(() => import('../KeywordLists'));
 const Collections = loadable(() => import('../Collections'));
+const CreateRun = loadable(() => import('../CreateRun'));
+
+const SelectCollections = loadable(() => import('../CreateRun/SelectCollections'));
+const SelectKeywords = loadable(() => import('../CreateRun/SelectKeywords'));
+const SelectMetadata = loadable(() => import('../CreateRun/SelectMetadata'));
 
 const styles = theme => ({
   root: {
@@ -171,8 +177,13 @@ class DefaultLayout extends React.Component {
           className={classNames(classes.content)}
         >
           <div className={classes.drawerHeader} />
+            <Route exact path='/' component={Home} />
             <Route exact path='/keyword_lists' component={KeywordLists} />
             <Route exact path='/collections' component={Collections} />
+            <Route exact path='/create_run' component={CreateRun} />
+            <Route exact path='/create_run/select_collections' component={SelectCollections} />
+            <Route exact path='/create_run/select_keywords' component={SelectKeywords} />
+            <Route exact path='/create_run/select_metadata' component={SelectMetadata} />
         </main>
         </BrowserRouter>
       </div>
