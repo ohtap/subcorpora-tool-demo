@@ -21,12 +21,20 @@ var data = {};
 
 // Current data for current run
 var currRun = {
+	id: 'test-05202019041500',
 	name: '',
 	date: '',
 	collections: [],
 	metadata: "./data/metadata.csv",
 	keywordList: [],
 	total: 0 // Progress of the run
+};
+
+// Current displays
+var currDisplay = {
+	summary: true,
+	runId: 'test-05202019041500',
+	individualId: 'BWOH-rape-3'
 };
 
 /*
@@ -67,8 +75,8 @@ app.listen(port, function() {
 	// Creates a session JSON file if one does not exist and writes to it
 	const rawContents = `{ 
 		'keyword-lists': {},
-		'past-runs': {},
-		'collections': {}
+		'collections': {},
+		'runs': {}
 	}`;
 
 	if (!fs.existsSync(dataFile)) {
@@ -91,6 +99,35 @@ function saveToSessionFile() {
 			console.log("ERROR: could not save to session.json (" + err + ")");
 		}
 	});
+}
+
+// Adds a new collection into the data
+function addCollection(_id, name, shortened_name, collection_count, description, themes, notes) {
+	var newCollection = {
+		"id": _id,
+		"name": name,
+		"shortened-name": shortened_name,
+		"collection-count": collection_count,
+		"description": description,
+		"themes": themes,
+		"notes": notes
+	};
+
+	data["collections"][_id] = newCollection;
+}
+
+// Adds a new keyword list itno the data
+function addKeywordList(_id, name, version, date_added, include, exclude) {
+	var newKeywordList = {
+		"id": _id,
+		"name": name,
+		"version": version,
+		"date-added": date_added,
+		"include": include,
+		"exclude": exclude
+	}
+
+	data["keyword-lists"][_id] = newKeywordList;
 }
 
 /** PYTHON PROCESS AND HELPER FUNCTIONS FOR RUNNING SUBCORPORA TOOL **/
@@ -125,9 +162,20 @@ app.post("/choose_keywords", function (req, res) {
 
 app.get("/get_python_progress", function (req, res) {
 	const statusMessage = "This is a status message from the backend...";
-	currRun.total = 10;
+	currRun.total = 100; // TODO: Remove this later when we actually put in the Python process
 	res.status(200).send({total: currRun.total, message: statusMessage});
-})
+});
+
+/** DISPLAYING REPORT DATA **/
+
+// Retrieves current data
+app.get("/get_current_run_data", function (req, res) {
+	if (!(currRun.id in data["runs"])) {
+		res.status(404).send(currRun.id + " not in data.");
+	}
+	res.status(200).send(data["runs"][currRun.id]);
+	console.log("Data successfully sent to frontend for report");
+});
 
 /** GETTING, UPLOADING, AND UPDATING COLLECTIONS **/
 

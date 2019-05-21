@@ -3,7 +3,10 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Typography from '@material-ui/core/Typography';
+import loadable from '@loadable/component';
 import axios from 'axios';
+
+const SummaryReport = loadable(() => import('./SummaryReport'));
 
 const styles = {
   root: {
@@ -20,6 +23,7 @@ class Report extends React.Component {
     completed: 0,
     statusMessage: 'Status message',
     statusTitle: 'Running...',
+    summary: false, // Whether or not we display the summary report
   };
 
 	componentDidMount() {
@@ -30,10 +34,11 @@ class Report extends React.Component {
 		clearInterval(this.timer);
 	}
 
+	// Gets the progress of the python process
 	progress = () => {
     const { completed } = this.state;
     if (completed === 100) {
-      this.setState({ completed: 0 });
+      this.setState({ summary: true });
     } else {
       axios.get('/get_python_progress')
         .then(res => this.setState({completed: res.data.total, statusMessage: res.data.message}))
@@ -43,7 +48,7 @@ class Report extends React.Component {
 
   renderLoading = () => {
   	const { classes } = this.props;
-  	
+
   	return (
   		<div>
   		<Typography variant='h4'>
@@ -60,7 +65,11 @@ class Report extends React.Component {
   }
 
   renderReport = () => {
-  	return this.renderLoading();
+  	if (this.state.summary) {
+  		return (<SummaryReport />);
+  	} else {
+  		return this.renderLoading();
+  	}
   }
 
   render() {
