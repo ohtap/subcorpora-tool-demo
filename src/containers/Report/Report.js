@@ -1,9 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
 import loadable from '@loadable/component';
-import Paper from '@material-ui/core/Paper';
 import axios from 'axios';
 
 const Navigation = loadable(() => import('./Navigation'));
@@ -53,6 +49,7 @@ class Report extends React.Component {
 		return (
 			<div>
 				{this.renderNavigation()}
+				<br />
 				{this.renderReport()}
 			</div>
 		);
