@@ -1,86 +1,62 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import LinearProgress from '@material-ui/core/LinearProgress';
 import Typography from '@material-ui/core/Typography';
 import loadable from '@loadable/component';
+import Paper from '@material-ui/core/Paper';
 import axios from 'axios';
 
+const Navigation = loadable(() => import('./Navigation'));
+const Loading = loadable(() => import('./Loading'));
 const SummaryReport = loadable(() => import('./SummaryReport'));
+const IndividualReport = loadable(() => import('./IndividualReport'));
 
 const styles = {
-  root: {
-    flexGrow: 1,
-  },
-  loadingText: {
-    textAlign: "center",
-    fontStyle: "italic",
-  },
+
 };
 
 class Report extends React.Component {
 	state = {
-    completed: 0,
-    statusMessage: 'Status message',
-    statusTitle: 'Running...',
-    summary: false, // Whether or not we display the summary report
-  };
+		loading: true,
+		summary: true,
+		collection: '',
+		keywordList: '',
+		data: {},
+	};
 
-	componentDidMount() {
-		this.timer = setInterval(this.progress, 500);
+	// Callback from child Loading component when done loading
+	endLoading = () => {
+		axios.get('/get_current_run_data')
+			.then(res => this.setState({ data: res.data }))
+			.then(data => this.setState({ loading: false }))
+			.catch(err => console.log("Error getting current run data (" + err + ")"));	
+	};
+
+	renderNavigation = () => {
+		if (!this.state.loading) {
+			return (<Navigation />);
+		}
 	}
 
-	componentWillUnmount() {
-		clearInterval(this.timer);
+	renderReport = () => {
+		if (this.state.loading) {
+			return (<Loading callbackDone={this.endLoading} />);
+		}
+		if (this.state.summary) {
+			return (<SummaryReport />);
+		}
+
+		return (<IndividualReport />);
 	}
 
-	// Gets the progress of the python process
-	progress = () => {
-    const { completed } = this.state;
-    if (completed === 100) {
-      this.setState({ summary: true });
-    } else {
-      axios.get('/get_python_progress')
-        .then(res => this.setState({completed: res.data.total, statusMessage: res.data.message}))
-        .catch(err => console.log("Error getting progress (" + err + ")"));
-    }
-  };
-
-  renderLoading = () => {
-  	const { classes } = this.props;
-
-  	return (
-  		<div>
-  		<Typography variant='h4'>
-        {this.state.statusTitle}
-      </Typography>
-      <br />
-      <LinearProgress variant="determinate" value={this.state.completed} />
-      <Typography paragraph className={classes.textAlign}>
-        {this.state.statusMessage}
-      </Typography>
-      <br />
-      </div>
-     );
-  }
-
-  renderReport = () => {
-  	if (this.state.summary) {
-  		return (<SummaryReport />);
-  	} else {
-  		return this.renderLoading();
-  	}
-  }
-
-  render() {
-  	const { classes } = this.props;
-
-    return (
-      <div className={classes.root}>
-      	{this.renderReport()}
-      </div>
-    );
-  }
+	render() {
+		return (
+			<div>
+				{this.renderNavigation()}
+				{this.renderReport()}
+			</div>
+		);
+	}
 }
 
 Report.propTypes = {

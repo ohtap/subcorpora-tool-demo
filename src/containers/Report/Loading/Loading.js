@@ -1,6 +1,7 @@
 import React from 'react';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Typography from '@material-ui/core/Typography';
+import axios from 'axios';
 
 class Loading extends React.Component {
 	constructor(props) {
@@ -26,7 +27,7 @@ class Loading extends React.Component {
     const { completed } = this.state;
     if (completed === 100) {
       this.setState({ summary: true, statusTitle: 'Done!', statusMessage: 'Finished running!' });
-      this.props.callbackDone(); // Tells the parent Report component that we're done loading
+      this.props.callbackDone(true); // Tells the parent Report component that we're done loading
     } else {
       axios.get('/get_python_progress')
         .then(res => this.setState({completed: res.data.total, statusMessage: res.data.message}))
@@ -45,10 +46,12 @@ class Loading extends React.Component {
 	      <br />
 	      <LinearProgress variant="determinate" value={this.state.completed} />
 	      <br />
-	      <Typography paragraph className={classes.textAlign}>
+	      <Typography paragraph>
 	        <em>{this.state.statusMessage}</em>
 	      </Typography>
       </div>
      );
 	}
 }
+
+export default Loading;
