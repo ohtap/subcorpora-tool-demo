@@ -36,8 +36,6 @@ class Loading extends React.Component {
   };
 
 	render() {
-		const { classes } = this.props;
-
   	return (
   		<div>
 	  		<Typography variant='h4'>

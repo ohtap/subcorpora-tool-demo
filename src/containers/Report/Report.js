@@ -11,10 +11,6 @@ const Loading = loadable(() => import('./Loading'));
 const SummaryReport = loadable(() => import('./SummaryReport'));
 const IndividualReport = loadable(() => import('./IndividualReport'));
 
-const styles = {
-
-};
-
 class Report extends React.Component {
 	state = {
 		loading: true,
@@ -32,9 +28,13 @@ class Report extends React.Component {
 			.catch(err => console.log("Error getting current run data (" + err + ")"));	
 	};
 
+	changeNavigation = (summary, collection, keywordList) => {
+		this.setState({ summary: summary, collection: collection, keywordList: keywordList });
+	};
+
 	renderNavigation = () => {
 		if (!this.state.loading) {
-			return (<Navigation />);
+			return (<Navigation parentData={this.state.data} callbackChangeNavigation={this.changeNavigation} />);
 		}
 	}
 
@@ -43,10 +43,10 @@ class Report extends React.Component {
 			return (<Loading callbackDone={this.endLoading} />);
 		}
 		if (this.state.summary) {
-			return (<SummaryReport />);
+			return (<SummaryReport parentData={this.state.data} />);
 		}
 
-		return (<IndividualReport />);
+		return (<IndividualReport parentData={this.state.data} />);
 	}
 
 	render() {
@@ -59,8 +59,4 @@ class Report extends React.Component {
 	}
 }
 
-Report.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
-
-export default withStyles(styles)(Report);
+export default Report;
