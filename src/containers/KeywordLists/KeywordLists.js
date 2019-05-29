@@ -41,10 +41,6 @@ function createData(id, name, version, date_added, included, excluded) {
 
 }
 
-// const rows = [
-
-// ];
-
 class KeywordLists extends React.Component {
   constructor(props) {
     super(props);
@@ -68,12 +64,12 @@ class KeywordLists extends React.Component {
 
   // TODO: Fix data retrieval
   // Gets our data once the component mounts
-  // componentDidMount() {
-  //   axios.get('/get_keywords')
-  //     .then(res => this.setState({keywords: res.data}))
-  //     .then(data => this.updateTable())
-  //     .catch(err => console.log("Error getting keywords (" + err + ")"));
-  // }
+  componentDidMount() {
+    axios.get('/get_keywords')
+      .then(res => this.setState({keywords: res.data}))
+      .then(data => this.updateTable())
+      .catch(err => console.log("Error getting keywords (" + err + ")"));
+  }
 
   // Updates the front-end selection with our current keyword information
   // updateTable() {
@@ -103,10 +99,10 @@ class KeywordLists extends React.Component {
             <TableHead>
               <TableRow>
                 <CustomTableCell>Keyword List Name</CustomTableCell>
-                <CustomTableCell align="right">Version</CustomTableCell>
-                <CustomTableCell align="right">Date added</CustomTableCell>
-                <CustomTableCell align="right">Included Keywords</CustomTableCell>
-                <CustomTableCell align="right">Excluded Keywords</CustomTableCell>
+                <CustomTableCell>Version</CustomTableCell>
+                <CustomTableCell>Date added</CustomTableCell>
+                <CustomTableCell>Included Keywords</CustomTableCell>
+                <CustomTableCell>Excluded Keywords</CustomTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -115,10 +111,10 @@ class KeywordLists extends React.Component {
                   <CustomTableCell component="th" scope="row">
                     {row.name}
                   </CustomTableCell>
-                  <CustomTableCell align="right">{row.version}</CustomTableCell>
-                  <CustomTableCell align="right">{row.date_added}</CustomTableCell>
-                  <CustomTableCell align="right">{row.included}</CustomTableCell>
-                  <CustomTableCell align="right">{row.excluded}</CustomTableCell>
+                  <CustomTableCell>{row.version}</CustomTableCell>
+                  <CustomTableCell>{row.date_added}</CustomTableCell>
+                  <CustomTableCell>{row.included}</CustomTableCell>
+                  <CustomTableCell>{row.excluded}</CustomTableCell>
                 </TableRow>
               ))}
             </TableBody>

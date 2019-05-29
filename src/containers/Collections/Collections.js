@@ -8,6 +8,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
+import axios from 'axios';
 
 const CustomTableCell = withStyles(theme => ({
   head: {
@@ -35,59 +36,75 @@ const styles = theme => ({
   },
 });
 
-let id = 0;
-function createData(name, calories, fat, carbs, protein) {
-  id += 1;
-  return { id, name, calories, fat, carbs, protein };
+function createData(id, name, shortened_name, collection_count, description, themes, notes) {
+  return { id, name, shortened_name, collection_count, description, themes, notes };
 }
 
-const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData('Eclair', 262, 16.0, 24, 6.0),
-  createData('Cupcake', 305, 3.7, 67, 4.3),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-];
+class Collections extends React.Component {
+  constructor(props) {
+    super(props);
 
-function Collections(props) {
-  const { classes } = props;
+    this.state = {
+      collections: [],
+      rows: [
+        {
+          id: "SHS", 
+          name: "Stanford Interviews", 
+          shortened_name: "Stanford", 
+          collection_count: 46, 
+          description: "Interviews from various alumni, faculty, staff, and others.", 
+          themes: "Experiences as a Stanford student; career aspirations; life stories leading up to success", 
+          notes: "This is only a subset of our current Stanford collection for demo purposes."
+        }
+      ],
+    }
+  }
 
-  return (
-    <div>
-      <Typography variant="h4">
-        Collections
-      </Typography>
-      <Typography paragraph>
-        Add, upload, edit, and delete collections. On this demo version, all editing functionality is not allowed.
-      </Typography>
-      <Paper className={classes.root}>
-        <Table className={classes.table}>
-          <TableHead>
-            <TableRow>
-              <CustomTableCell>Dessert (100g serving)</CustomTableCell>
-              <CustomTableCell align="right">Calories</CustomTableCell>
-              <CustomTableCell align="right">Fat (g)</CustomTableCell>
-              <CustomTableCell align="right">Carbs (g)</CustomTableCell>
-              <CustomTableCell align="right">Protein (g)</CustomTableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.map(row => (
-              <TableRow className={classes.row} key={row.id}>
-                <CustomTableCell component="th" scope="row">
-                  {row.name}
-                </CustomTableCell>
-                <CustomTableCell align="right">{row.calories}</CustomTableCell>
-                <CustomTableCell align="right">{row.fat}</CustomTableCell>
-                <CustomTableCell align="right">{row.carbs}</CustomTableCell>
-                <CustomTableCell align="right">{row.protein}</CustomTableCell>
+  // TODO: Fix data retrieval
+  componentDidMount() {}
+
+  render() {
+    const { classes } = this.props;
+
+    return (
+      <div>
+        <Typography variant="h4">
+          Collections
+        </Typography>
+        <Typography paragraph>
+          Add, upload, edit, and delete collections. On this demo version, all editing functionality is not allowed.
+        </Typography>
+        <Paper className={classes.root}>
+          <Table className={classes.table}>
+            <TableHead>
+              <TableRow>
+                <CustomTableCell>Collection ID</CustomTableCell>
+                <CustomTableCell>Collection Name</CustomTableCell>
+                <CustomTableCell>Collection Count</CustomTableCell>
+                <CustomTableCell>Description</CustomTableCell>
+                <CustomTableCell>Themes</CustomTableCell>
+                <CustomTableCell>Notes</CustomTableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </Paper>
-    </div>
-  );
+            </TableHead>
+            <TableBody>
+              {this.state.rows.map(row => (
+                <TableRow className={classes.row} key={row.id}>
+                  <CustomTableCell component="th" scope="row">
+                    {row.id}
+                  </CustomTableCell>
+                  <CustomTableCell>{row.name}</CustomTableCell>
+                  <CustomTableCell>{row.collection_count}</CustomTableCell>
+                  <CustomTableCell>{row.description}</CustomTableCell>
+                  <CustomTableCell>{row.themes}</CustomTableCell>
+                  <CustomTableCell>{row.notes}</CustomTableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </Paper>
+      </div>
+    );
+  }
 }
 
 Collections.propTypes = {
