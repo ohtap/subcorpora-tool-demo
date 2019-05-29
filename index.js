@@ -161,7 +161,7 @@ app.post("/choose_keywords", function (req, res) {
 });
 
 app.get("/get_python_progress", function (req, res) {
-	const statusMessage = "This is a status message from the backend...";
+	const statusMessage = "Loading...";
 	currRun.total = 100; // TODO: Remove this later when we actually put in the Python process
 	res.status(200).send({total: currRun.total, message: statusMessage});
 });
