@@ -30,6 +30,7 @@ const Home = loadable(() => import('../Home'));
 const KeywordLists = loadable(() => import('../KeywordLists'));
 const Collections = loadable(() => import('../Collections'));
 const CreateRun = loadable(() => import('../CreateRun'));
+const PastRuns = loadable(() => import('../PastRuns'));
 
 const SelectCollections = loadable(() => import('../CreateRun/SelectCollections'));
 const SelectKeywords = loadable(() => import('../CreateRun/SelectKeywords'));
@@ -187,6 +188,7 @@ class DefaultLayout extends React.Component {
             <Route exact path='/create_run/select_keywords' component={SelectKeywords} />
             <Route exact path='/create_run/select_metadata' component={SelectMetadata} />
             <Route exact path='/report' component={Report} />
+            <Route exact path='/past_runs' component={PastRuns} />
         </main>
         </BrowserRouter>
       </div>
