@@ -8,6 +8,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
+import axios from 'axios';
 
 const CustomTableCell = withStyles(theme => ({
   head: {
@@ -35,59 +36,97 @@ const styles = theme => ({
   },
 });
 
-let id = 0;
-function createData(name, calories, fat, carbs, protein) {
-  id += 1;
-  return { id, name, calories, fat, carbs, protein };
+function createData(id, name, version, date_added, included, excluded) {
+  return { id, name, version, date_added, included, excluded };
+
 }
 
-const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData('Eclair', 262, 16.0, 24, 6.0),
-  createData('Cupcake', 305, 3.7, 67, 4.3),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-];
+// const rows = [
 
-function KeywordLists(props) {
-  const { classes } = props;
+// ];
 
-  return (
-    <div>
-      <Typography variant="h4">
-        Keyword Lists
-      </Typography>
-      <Typography paragraph>
-        Add, edit, and delete keyword lists. On this demo version, all editing functionality is not allowed.
-      </Typography>
-      <Paper className={classes.root}>
-        <Table className={classes.table}>
-          <TableHead>
-            <TableRow>
-              <CustomTableCell>Dessert (100g serving)</CustomTableCell>
-              <CustomTableCell align="right">Calories</CustomTableCell>
-              <CustomTableCell align="right">Fat (g)</CustomTableCell>
-              <CustomTableCell align="right">Carbs (g)</CustomTableCell>
-              <CustomTableCell align="right">Protein (g)</CustomTableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.map(row => (
-              <TableRow className={classes.row} key={row.id}>
-                <CustomTableCell component="th" scope="row">
-                  {row.name}
-                </CustomTableCell>
-                <CustomTableCell align="right">{row.calories}</CustomTableCell>
-                <CustomTableCell align="right">{row.fat}</CustomTableCell>
-                <CustomTableCell align="right">{row.carbs}</CustomTableCell>
-                <CustomTableCell align="right">{row.protein}</CustomTableCell>
+class KeywordLists extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      keywords: [],
+      rows: [
+        { 
+          id:'rape-3', 
+          name: 'rape', 
+          version: 3, 
+          date_added: '01/24/2019', 
+          included: "rap*, sex* assault, outrage, attack, insult, ravish, harass*, sex* abuse, seduce, seduction, took advantage of, sex* violence, hanky panky, abus*, incest*, anti-rape, hit on me, hit on her, pedophilia, child abuse, molest*, brutality", 
+          excluded: "rapport, rapping, rapidly, rappelling, Dr. Raper, heart attack, rapidly, rap, racist attack, under attack, sterilization abuse", 
+        }
+      ],
+    };
+
+    // this.updateTable = this.updateTable.bind(this);
+  }
+
+  // TODO: Fix data retrieval
+  // Gets our data once the component mounts
+  // componentDidMount() {
+  //   axios.get('/get_keywords')
+  //     .then(res => this.setState({keywords: res.data}))
+  //     .then(data => this.updateTable())
+  //     .catch(err => console.log("Error getting keywords (" + err + ")"));
+  // }
+
+  // Updates the front-end selection with our current keyword information
+  // updateTable() {
+  //   var rows = [];
+  //   for (var id in this.state.keywords) {
+  //     var k = this.state.keywords[id];
+  //     console.log(k);
+  //     var data = createData(id, k['name'], k['version'], k['date_added'], k['included'].join(", "), k['excluded'].join(", "));
+  //     rows.push(data);
+  //   }
+  //   this.setState({ rows: rows });
+  // }
+
+  render() {
+    const { classes } = this.props;
+
+    return (
+      <div>
+        <Typography variant="h4">
+          Keyword Lists
+        </Typography>
+        <Typography paragraph>
+          Add, edit, and delete keyword lists. On this demo version, all editing functionality is not allowed.
+        </Typography>
+        <Paper className={classes.root}>
+          <Table className={classes.table}>
+            <TableHead>
+              <TableRow>
+                <CustomTableCell>Keyword List Name</CustomTableCell>
+                <CustomTableCell align="right">Version</CustomTableCell>
+                <CustomTableCell align="right">Date added</CustomTableCell>
+                <CustomTableCell align="right">Included Keywords</CustomTableCell>
+                <CustomTableCell align="right">Excluded Keywords</CustomTableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </Paper>
-    </div>
-  );
+            </TableHead>
+            <TableBody>
+              {this.state.rows.map(row => (
+                <TableRow className={classes.row} key={row.id}>
+                  <CustomTableCell component="th" scope="row">
+                    {row.name}
+                  </CustomTableCell>
+                  <CustomTableCell align="right">{row.version}</CustomTableCell>
+                  <CustomTableCell align="right">{row.date_added}</CustomTableCell>
+                  <CustomTableCell align="right">{row.included}</CustomTableCell>
+                  <CustomTableCell align="right">{row.excluded}</CustomTableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </Paper>
+      </div>
+    );
+  }
 }
 
 KeywordLists.propTypes = {

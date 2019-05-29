@@ -65,7 +65,7 @@ class SelectCollections extends React.Component {
     super(props);
 
     this.state = {
-      keywords: [],
+      collections: [],
       selected: [],
       selectedIds: [],
       idsOrder: [],
