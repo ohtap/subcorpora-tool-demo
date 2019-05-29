@@ -3,67 +3,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
-import { Animation } from '@devexpress/dx-react-chart';
-import {
-  Chart,
-  LineSeries,
-  Title,
-  ArgumentAxis,
-  ValueAxis,
-  Legend
-} from '@devexpress/dx-react-chart-material-ui';
-
-const legendStyles = () => ({
-  root: {
-    display: 'flex',
-    margin: 'auto',
-    flexDirection: 'row',
-  },
-});
-const legendLabelStyles = theme => ({
-  label: {
-    paddingTop: theme.spacing.unit,
-    whiteSpace: 'nowrap',
-  },
-});
-const legendItemStyles = () => ({
-  item: {
-    flexDirection: 'column',
-  },
-});
-
-const legendRootBase = ({ classes, ...restProps }) => (
-  <Legend.Root {...restProps} className={classes.root} />
-);
-const legendLabelBase = ({ classes, ...restProps }) => (
-  <Legend.Label className={classes.label} {...restProps} />
-);
-const legendItemBase = ({ classes, ...restProps }) => (
-  <Legend.Item className={classes.item} {...restProps} />
-);
-const Root = withStyles(legendStyles, { name: 'LegendRoot' })(legendRootBase);
-const Label = withStyles(legendLabelStyles, { name: 'LegendLabel' })(legendLabelBase);
-const Item = withStyles(legendItemStyles, { name: 'LegendItem' })(legendItemBase);
-
-const ValueLabel = (props) => {
-  const { text } = props;
-  return (
-    <ValueAxis.Label
-      {...props}
-      text={`${text}%`}
-    />
-  );
-};
-
-const titleStyles = {
-  title: {
-    whiteSpace: 'pre',
-  },
-};
-
-const TitleText = withStyles(titleStyles)(({ classes, ...props }) => (
-  <Title.Text {...props} className={classes.title} />
-));
+import {Line, Bar, Doughnut} from 'react-chartjs-2';
 
 const styles = theme => ({
 	root: {
@@ -90,24 +30,115 @@ class SummaryReport extends React.Component {
 
     this.state = {
 			data: this.props.parentData, // Passed from the parent report
-			timeRangeInterviewsData: [],
-			timeRangeBirthYearData: [],
+			timeRangeInterviewsData: {},
+			timeRangeBirthYearData: {},
+			keywordCounts: {},
+			intervieweeRaceData: {},
 	  };
   }
 
   componentDidMount() {
   	this.generateTimeRangeInterviewsData();
   	this.generateTimeRangeBirthYear();
+  	this.generateKeywordCountsData();
+  	this.generateIntervieweeRaceData();
+  }
+
+  generateIntervieweeRaceData = () => {
+  	var labels = [];
+  	var values = [];
+
+  	const data = this.state.data['summary-report']['race'];
+  	for (var key in data) {
+  		const value = data[key];
+  		labels.push(key);
+  		values.push(value);
+  	}
+
+  	const newData = {
+			labels: labels,
+			datasets: [{
+				data: values,
+				backgroundColor: [
+				'#FF6384',
+				'#36A2EB',
+				'#FFCE56'
+				],
+				hoverBackgroundColor: [
+				'#FF6384',
+				'#36A2EB',
+				'#FFCE56'
+				]
+			}]
+		};
+
+  	this.setState({ intervieweeRaceData: newData });
+  }
+
+  generateKeywordCountsData = () => {
+  	var labels = [];
+  	var values = [];
+  	const data = this.state.data['summary-report']['keyword-counts'];
+  	for (var key in data) {
+  		const value = data[key]
+  		labels.push(key);
+  		values.push(value);
+  	}
+
+  	const newData = {
+		  labels: labels,
+		  datasets: [
+		    {
+		      label: 'Counts of Keyword Found',
+		      backgroundColor: 'rgba(255,99,132,0.2)',
+		      borderColor: 'rgba(255,99,132,1)',
+		      borderWidth: 1,
+		      hoverBackgroundColor: 'rgba(255,99,132,0.4)',
+		      hoverBorderColor: 'rgba(255,99,132,1)',
+		      data: values
+		    }
+		  ]
+		};
+
+  	this.setState({ keywordCounts: newData });
   }
 
   generateTimeRangeInterviewsData = () => {
-		// TODO: Sort them by the key
-		const newData = [];
-		const data = this.state.data['summary-report']['time-range-interviews'];
-		for (var key in data) {
-			const value = data[key];
-			newData.push({lineValue: value, argument: parseInt(key)});
-		}
+		var labels = [];
+		var values = [];
+  	const data = this.state.data['summary-report']['time-range-interviews'];
+  	for (var key in data) {
+  		const value = data[key]
+  		labels.push(key);
+  		values.push(value);
+  	}
+
+  	const newData = {
+		  labels: labels,
+		  datasets: [
+		    {
+		      label: 'Time Range of Interviews (by decade)',
+		      fill: false,
+		      lineTension: 0.1,
+		      backgroundColor: 'rgba(75,192,192,0.4)',
+		      borderColor: 'rgba(75,192,192,1)',
+		      borderCapStyle: 'butt',
+		      borderDash: [],
+		      borderDashOffset: 0.0,
+		      borderJoinStyle: 'miter',
+		      pointBorderColor: 'rgba(75,192,192,1)',
+		      pointBackgroundColor: '#fff',
+		      pointBorderWidth: 1,
+		      pointHoverRadius: 5,
+		      pointHoverBackgroundColor: 'rgba(75,192,192,1)',
+		      pointHoverBorderColor: 'rgba(220,220,220,1)',
+		      pointHoverBorderWidth: 2,
+		      pointRadius: 1,
+		      pointHitRadius: 10,
+		      data: values
+		    }
+		  ]
+		};
 
 		this.setState({ timeRangeInterviewsData: newData });
 	};
@@ -126,7 +157,7 @@ class SummaryReport extends React.Component {
 
   render() {
   	const { classes } = this.props;
-    const { timeRangeInterviewsData: triData, timeRangeBirthYearData: trbyData } = this.state;
+    const { intervieweeRaceData: irData, timeRangeInterviewsData: triData, timeRangeBirthYearData: trbyData, keywordCounts: kcData } = this.state;
     const summaryData = this.state.data['summary-report'];
 
     return (
@@ -145,53 +176,26 @@ class SummaryReport extends React.Component {
 	        </Typography>
 	      </Paper>
 	      <br />
-	      <Paper>
-	        <Chart
-	          data={triData}
-	          className={classes.chart}
-	        >
-	          <ArgumentAxis tickFormat={format} />
-	          <ValueAxis
-	            max={50}
-	            labelComponent={ValueLabel}
-	          />
-
-	          <LineSeries
-	            valueField="lineValue"
-	            argumentField="argument"
-	            name="All Collections"
-	          />
-	          <Legend position="bottom" rootComponent={Root} itemComponent={Item} labelComponent={Label} />
-	          <Title
-	            text={`Time range of years interviews were conducted ${'\n'}(Across all collections)`}
-	            textComponent={TitleText}
-	          />
-	          <Animation />
-	        </Chart>
+	      <Paper className={classes.paper} elevation={1}>
+	      	<Typography variant="h5" component="h3">
+	          Keyword Counts
+	        </Typography>
+	      	<Bar
+	      		data = {kcData}
+	      	/>
 	      </Paper>
-	      <Paper>
-	        <Chart
-	          data={trbyData}
-	          className={classes.chart}
-	        >
-	          <ArgumentAxis tickFormat={format} />
-	          <ValueAxis
-	            max={50}
-	            labelComponent={ValueLabel}
-	          />
-
-	          <LineSeries
-	            valueField="lineValue"
-	            argumentField="argument"
-	            name="All Collections"
-	          />
-	          <Legend position="bottom" rootComponent={Root} itemComponent={Item} labelComponent={Label} />
-	          <Title
-	            text={`Time range of years interviees were born ${'\n'}(Across all collections)`}
-	            textComponent={TitleText}
-	          />
-	          <Animation />
-	        </Chart>
+	      <Paper className={classes.paper} elevation={1}>
+	      	<Typography variant="h5" component="h3">
+	          Time Range of Interviews
+	        </Typography>
+	      	<Line data={triData} />
+	      </Paper>
+	      <br />
+	      <Paper className={classes.paper} elevation={1}>
+	      	<Typography variant="h5" component="h3">
+	          Race of Interviewees
+	        </Typography>
+	      	<Doughnut data={irData} />
 	      </Paper>
       </div>
     );
