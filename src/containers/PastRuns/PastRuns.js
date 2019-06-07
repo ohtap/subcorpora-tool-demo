@@ -90,10 +90,10 @@ class PastRuns extends React.Component {
     return (
       <div>
         <Typography variant="h4">
-          Keyword Lists
+          Past Runs
         </Typography>
         <Typography paragraph>
-          Add, edit, and delete keyword lists. On this demo version, all editing functionality is not allowed.
+          Access old runs.
         </Typography>
         <Paper className={classes.root}>
           <Table className={classes.table}>
